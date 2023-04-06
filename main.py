@@ -21,9 +21,20 @@ color_sensor = ColorSensor(Port.S2)
 
 # Write your program here.
 ev3.speaker.beep()
-arm_motor.run_angle(100,-300, then=Stop.HOLD, wait=True)
-color = None
-print(color)
-while (color == None):
+arm_motor.run_angle(100,-300, then=Stop.HOLD, wait=False)
+
+turning_motor.run_until_stalled(-100, then=Stop.HOLD, duty_limit=None)
+
+current_color = None
+
+while (current_color == None and turning_motor.stalled() == False):
     color = color_sensor.color()
     turning_motor.run_angle(300,-10, then=Stop.HOLD, wait=True)
+
+claw_motor.run_until_stalled(300, then=stop.HOLD, duty_limit=None)
+
+arm_motor.coast()
+
+claw_motor.run_until_stalled(-300, then=stop.HOLD, duty_limit=None)
+
+arm_motor.run_until_stalled(300, then=stop.HOLD, duty_limit=None)
