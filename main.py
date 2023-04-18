@@ -39,29 +39,27 @@ def calibrate():
 
 def turn_angle(given_angle):
 
-    arm_motor.run_angle(300,-400, then=Stop.HOLD, wait=True)
+    # arm_motor.run_angle(300,-400, then=Stop.HOLD, wait=True)
 
-    while touch_sensor.pressed() == False:
-        turning_motor.run_angle(300, 20, then=Stop.HOLD, wait=True)
+    # while touch_sensor.pressed() == False:
+    #     turning_motor.run_angle(300, 20, then=Stop.HOLD, wait=True)
 
-    turning_motor.reset_angle(0)
+    # turning_motor.reset_angle(0)
 
     desiered_angle = given_angle
 
     turning_motor.run_target(200,(desiered_angle*-3.5))
 
-    """Turning motor to right angle"""
     return
 
 def pick_up():
     
-    claw_motor.run_until_stalled(-50, then=Stop.HOLD, duty_limit=50)
-    claw_motor.reset_angle(0)
+    # claw_motor.run_until_stalled(-50, then=Stop.HOLD, duty_limit=50)
+    # claw_motor.reset_angle(0)
 
-    claw_motor.run_angle(50,70, then=Stop.HOLD, wait=True)
+    # claw_motor.run_angle(50,70, then=Stop.HOLD, wait=True)
 
     arm_motor.run_angle(300,400, then=Stop.COAST, wait = True)
-    
 
     claw_motor.run_until_stalled(-50, then=Stop.HOLD, duty_limit=50)
 
@@ -73,6 +71,8 @@ def pick_up():
         item_found = False
     
     arm_motor.run_angle(300,-400, then=Stop.HOLD, wait=True)
+
+    print(item_found)
     
     return item_found
 
@@ -143,4 +143,4 @@ def run_until_found(given_angle):
     return
 
 
-check_color()
+
