@@ -42,8 +42,8 @@ def pick_up_angle(given_angle):
     claw_motor.run_angle(50,70, then=Stop.HOLD, wait=True)
 
 
-    arm_motor.run_angle(500,100, then=Stop.COAST, wait = False)
-    time.sleep(4)
+    arm_motor.run_angle(300,400, then=Stop.COAST, wait = True)
+    
 
     claw_motor.run_until_stalled(-50, then=Stop.HOLD, duty_limit=50)
 
@@ -51,18 +51,23 @@ def pick_up_angle(given_angle):
 
     ooga=5
 
-    while ooga==5:
-        arm_motor.angle()
-    return
 
 def put_down():
-    arm_motor.run_angle(500,100, then=Stop.COAST, wait = False)
-    time.sleep(4)
+    arm_motor.run_angle(300,400, then=Stop.COAST, wait = True)
 
     claw_motor.run_angle(50, 70, then=Stop.HOLD, wait=True)
+    
+    return
+
+def check_color():
+    arm_motor.run_angle(300, 200, then=Stop.HOLD, wait= True)
+    time.sleep(1)
+    current_color = color_sensor.color()
+    print(current_color)
+    arm_motor.run_angle(300, -200, then=Stop.HOLD, wait = True)
     return
 
 
 
 
-
+check_color()
