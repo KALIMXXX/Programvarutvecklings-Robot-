@@ -25,18 +25,21 @@ touch_sensor = TouchSensor(Port.S1)
 # Main movement functions
 
 def calibrate():
-    arm_motor.run_until_stalled(400, then=Stop.HOLD, duty_limit=15)
-    arm_motor.run_angle(300,-415, then=Stop.HOLD, wait=True)
+
     while touch_sensor.pressed() == False:
         turning_motor.run_angle(300, 20, then=Stop.HOLD, wait=True)
         turning_motor.reset_angle(0)
     claw_motor.run_until_stalled(-50, then=Stop.HOLD, duty_limit=50)
     claw_motor.reset_angle(0)
     claw_motor.run_angle(50,85, then=Stop.HOLD, wait=True)
-    arm_motor.run_until_stalled(300, then=Stop.HOLD, duty_limit=5)
+    arm_motor.run_until_stalled(-300, then=Stop.HOLD, duty_limit=5)
+
+    arm_motor.run_until_stalled(400, then=Stop.HOLD, duty_limit=15)
+    arm_motor.run_angle(300,-415, then=Stop.HOLD, wait=True)
     return
 
 def turn_angle(given_angle):
+    arm_motor.hold()
     desiered_angle = given_angle
     turning_motor.run_target(200,(desiered_angle*-3.5))
     return
@@ -61,20 +64,22 @@ def pick_up(height):
         print(item_found)
         return item_found
     
-def put_down(pos):
+def put_down(pos,height):
     turn_angle(pos)
-    arm_motor.run_angle(300,370, then=Stop.COAST, wait = True)
+    height1 = (370/5)*height
+    height2 = (-1)*((370/5)*height) 
+    arm_motor.run_angle(300,height1, then=Stop.HOLD, wait = True)
     claw_motor.run_angle(50, 85, then=Stop.HOLD, wait=True)
-    arm_motor.run_angle(300,-370, then=Stop.COAST, wait = True)
+    arm_motor.run_angle(300,height2, then=Stop.HOLD, wait = True)
     return
 
 def check_color():
     arm_motor.run_angle(300, 150, then=Stop.HOLD, wait= True)
-    time.sleep(3)
+    time.sleep(1)
     current_color = color_sensor.color()
-    print(current_color)
     arm_motor.run_angle(300, -150, then=Stop.HOLD, wait = True)
-    return
+    print(current_color)
+    return current_color
 
 def run_until_found(given_angle):
     item_found = False
@@ -89,13 +94,119 @@ def run_until_found(given_angle):
 # Complicated functions
 
 def check_color_pos(pos):
+    pick_up(1)
     turn_angle(pos)
+    
+    
+    color = check_color()
+    return color
+
+
+#US05
+def drop_based_on_color(pickupzone):
+    calibrate()
+    turn_angle(pickupzone)
     pick_up(0)
-    check_color()
+    color = check_color()
+    print(color)
+    if color == Color.BLUE:
+        put_down(0, 5)
+    elif color == Color.RED:
+        put_down(90), 5
+    elif color == Color.GREEN:
+        put_down(180, 5)
+
+    
+#US08 and US12
+def sort_based_on_color(pickupzone):
+    height1 = 5
+    height2 = 3
+    height3 = 0
+    calibrate()
+    turn_angle(pickupzone)
+    pick_up(0)
+    color = check_color()
+    while color not in [Color.BLUE, Color.RED, Color.GREEN]:
+        color = check_color()
+    print(color)
+    if color == Color.BLUE:
+        put_down(0, height1)
+    elif color == Color.RED:
+        put_down(90, height1)
+    elif color == Color.GREEN:
+        put_down(180, height1)
+
+    turn_angle(pickupzone)
+    pick_up(1)
+    color = check_color()
+    while color not in [Color.BLUE, Color.RED, Color.GREEN]:
+        color = check_color()
+    print(color)
+    if color == Color.BLUE:
+        put_down(0, height2)
+    elif color == Color.RED:
+        put_down(90, height2)
+    elif color == Color.GREEN:
+        put_down(180, height2)
+
+    turn_angle(pickupzone)
+    pick_up(1)
+    color = check_color()
+    while color not in [Color.BLUE, Color.RED, Color.GREEN]:
+        color = check_color()
+    print(color)
+    if color == Color.BLUE:
+        put_down(0, height3)
+    elif color == Color.RED:
+        put_down(90, height3)
+    elif color == Color.GREEN:
+        put_down(180, height3)
 
 
+def sort_based_on_color_wait(pickupzone):
+    time.sleep(10)
+    height1 = 5
+    height2 = 5
+    height3 = 5
+    calibrate()
+    turn_angle(pickupzone)
+    pick_up(0)
+    color = check_color()
+    while color not in [Color.BLUE, Color.RED, Color.GREEN]:
+        color = check_color()
+    print(color)
+    if color == Color.BLUE:
+        put_down(0, height1)
+    elif color == Color.RED:
+        put_down(90, height1)
+    elif color == Color.GREEN:
+        put_down(180, height1)
 
-calibrate()
-check_color_pos(90)
-put_down(180)
-turn_angle(90)
+    turn_angle(pickupzone)
+    pick_up(1)
+    color = check_color()
+    while color not in [Color.BLUE, Color.RED, Color.GREEN]:
+        color = check_color()
+    print(color)
+    if color == Color.BLUE:
+        put_down(0, height2)
+    elif color == Color.RED:
+        put_down(90, height2)
+    elif color == Color.GREEN:
+        put_down(180, height2)
+
+    turn_angle(pickupzone)
+    pick_up(1)
+    color = check_color()
+    while color not in [Color.BLUE, Color.RED, Color.GREEN]:
+        color = check_color()
+    print(color)
+    if color == Color.BLUE:
+        put_down(0, height3)
+    elif color == Color.RED:
+        put_down(90, height3)
+    elif color == Color.GREEN:
+        put_down(180, height3)    
+
+drop_based_on_color(45)
+
